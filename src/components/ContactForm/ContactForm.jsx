@@ -3,6 +3,7 @@ import { Form, Label, Input, FormBtn } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { addContacts } from 'redux/operations';
 import { selectContacts } from 'redux/selectors';
+import { nanoid } from 'nanoid';
 export function ContactForm() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -26,17 +27,11 @@ export function ContactForm() {
     const checkName = contacts.map(({ name }) => {
       return name;
     });
-
+    const itemContact = { name, phone, id: nanoid() };
     if (checkName[0] === name) {
       alert(`${checkName[0]} is already in contacts`);
     } else {
-      dispatch(
-        addContacts({
-       
-          name,
-          phone,
-        })
-      );
+      dispatch(addContacts(itemContact));
       setName('');
       setPhone('');
     }
