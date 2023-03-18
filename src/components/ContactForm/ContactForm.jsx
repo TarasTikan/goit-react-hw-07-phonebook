@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { Form, Label, Input, FormBtn } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContacts } from 'redux/contactSlice';
-import { nanoid } from 'nanoid';
-import { getContacts } from 'redux/selectors';
+import { addContacts } from 'redux/operations';
+import { selectContacts } from 'redux/selectors';
 export function ContactForm() {
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const [phone, setPhone] = useState('');
   const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(selectContacts);
   const handleInputChange = event => {
     const { name, value } = event.currentTarget;
     switch (name) {
@@ -16,7 +15,7 @@ export function ContactForm() {
         setName(value);
         break;
       case 'number':
-        setNumber(value);
+        setPhone(value);
         break;
       default:
         return;
@@ -24,11 +23,6 @@ export function ContactForm() {
   };
   const onFormSubmitContacts = event => {
     event.preventDefault();
-    const contactItems = {
-      name,
-      id: nanoid(),
-      number,
-    };
     const checkName = contacts.map(({ name }) => {
       return name;
     });
@@ -36,9 +30,15 @@ export function ContactForm() {
     if (checkName[0] === name) {
       alert(`${checkName[0]} is already in contacts`);
     } else {
-      dispatch(addContacts(contactItems));
+      dispatch(
+        addContacts({
+       
+          name,
+          phone,
+        })
+      );
       setName('');
-      setNumber('');
+      setPhone('');
     }
   };
 
@@ -61,7 +61,7 @@ export function ContactForm() {
         <Input
           type="tel"
           name="number"
-          value={number}
+          value={phone}
           onChange={handleInputChange}
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
